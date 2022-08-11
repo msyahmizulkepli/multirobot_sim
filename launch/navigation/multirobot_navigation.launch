@@ -1,0 +1,65 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="first_robot"  default="robot1"/>
+  <arg name="second_robot" default="robot2"/>
+  <arg name="open_rviz" default="true"/>
+  <arg name="move_forward_only" default="false"/>
+  <arg name="map_file" default="$(find turtlebot3_navigation)/maps/map.yaml"/>
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+  
+  <!-- Map server -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <group ns="$(arg first_robot)">
+    <!--robot_state_publisher, publishing state of robot to tf-->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen">
+      <param name="publish_frequency" type="double" value="50.0" />
+      <param name="tf_prefix" value="$(arg first_robot)" />
+    </node>
+
+    <!-- AMCL -->
+    <include file="$(find turtlebot3_navigation)/launch/multirobot_amcl.launch">
+      <arg name="robot_name" value="$(arg first_robot)"/>
+      <arg name="initial_pose_x" value="-2.0"/>
+      <arg name="initial_pose_y" value="-0.5"/>
+    </include>
+
+    <!-- move_base -->
+    <include file="$(find turtlebot3_navigation)/launch/multirobot_move_base.launch">
+      <arg name="model" value="$(arg model)" />
+      <arg name="robot_name" value="$(arg first_robot)"/>
+      <arg name="move_forward_only" value="$(arg move_forward_only)"/>
+    </include>
+
+  </group>
+
+  <group ns="$(arg second_robot)">
+    <!--robot_state_publisher, publishing state of robot to tf-->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen">
+      <param name="publish_frequency" type="double" value="50.0" />
+      <param name="tf_prefix" value="$(arg second_robot)" />
+    </node>
+
+    <!-- AMCL -->
+    <include file="$(find turtlebot3_navigation)/launch/multirobot_amcl.launch">
+      <arg name="robot_name" value="$(arg second_robot)"/>
+      <arg name="initial_pose_x" value="-2.0"/>
+      <arg name="initial_pose_y" value="0.5"/>
+    </include>
+
+    <!-- move_base -->
+    <include file="$(find turtlebot3_navigation)/launch/multirobot_move_base.launch">
+      <arg name="model" value="$(arg model)" />
+      <arg name="robot_name" value="$(arg second_robot)"/>
+      <arg name="move_forward_only" value="$(arg move_forward_only)"/>
+    </include>
+    
+  </group>
+
+  <!-- rviz -->
+  <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find medibotv4_simulation)/rviz/multirobot_navigation_simulation.rviz"/>
+  </group>
+</launch>
