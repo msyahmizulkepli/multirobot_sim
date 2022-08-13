@@ -1,7 +1,6 @@
 # multirobot_sim
-multirobot simulation in ros noetic
+multirobot simulation using multiple turtlebot3 in ros noetic
 
-*still in progress
 
 ### Software
 
