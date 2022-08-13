@@ -23,8 +23,10 @@ git clone https://github.com/msyahmizulkepli/multirobot_sim.git
 ### Multirobot Simulation
 
 ```shell
+export TURTLEBOT3_MODEL=burger
 roslaunch multirobot_sim gazebo.launch
 ```
 ```shell
+export TURTLEBOT3_MODEL=burger
 roslaunch multirobot_sim navigation.launch
 ```
