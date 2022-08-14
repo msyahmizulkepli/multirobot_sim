@@ -28,6 +28,6 @@
   <!-- rviz -->
   <group if="$(arg open_rviz)"> 
     <node pkg="rviz" type="rviz" name="rviz" required="true"
-          args="-d $(find multirobot_sim/rviz/multirobot_navigation_simulation.rviz"/>
+          args="-d $(find multirobot_sim)/rviz/multirobot_navigation.rviz"/>
   </group>
 </launch>
